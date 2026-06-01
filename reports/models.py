@@ -33,3 +33,20 @@ class Report(models.Model):
     
     def __str__(self):
         return f"{self.user.email} - {self.station.name} - {self.issue_type}"
+    
+    
+class Review(models.Model):
+    """User reviews/ratings for stations"""
+    station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reviews')
+    rating = models.IntegerField(help_text="Rating from 1 to 5 stars")
+    comment = models.TextField(blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']  # Show newest reviews first
+        verbose_name = 'Review'
+        verbose_name_plural = 'Reviews'
+    
+    def __str__(self):
+        return f"{self.user.email} - {self.station.name} - {self.rating}★"
