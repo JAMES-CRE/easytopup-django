@@ -176,3 +176,155 @@ class StationViewSet(viewsets.ModelViewSet):
             status='Open',
             verified=False
         )
+
+    def create(self, request, *args, **kwargs):
+        """Create station with premium data support"""
+        data = request.data.copy()
+        
+        # Convert frontend premium format to backend format
+        # Petrol data
+        if 'petrol' in data:
+            data['petrol_data'] = {'petrol': data.pop('petrol')}
+        
+        # Diesel data
+        if 'diesel' in data:
+            data['diesel_data'] = {'diesel': data.pop('diesel')}
+        
+        # EV data
+        if 'charging_points' in data:
+            ev_data = {
+                'charging_points': data.pop('charging_points'),
+                'has_backup_generator': data.pop('has_backup_generator', False)
+            }
+            data['ev_data'] = ev_data
+        
+        # Handle LPG price (keep simple)
+        # No transformation needed - keep as is
+        
+        # Set operator and default values
+        data['operator'] = request.user.id
+        data['status'] = 'Open'
+        data['verified'] = False
+        
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+    def update(self, request, *args, **kwargs):
+        """Update station with premium data support"""
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        data = request.data.copy()
+        
+        # Convert frontend premium format to backend format for update
+        if 'petrol' in data:
+            data['petrol_data'] = {'petrol': data.pop('petrol')}
+        
+        if 'diesel' in data:
+            data['diesel_data'] = {'diesel': data.pop('diesel')}
+        
+        if 'charging_points' in data:
+            ev_data = {
+                'charging_points': data.pop('charging_points'),
+                'has_backup_generator': data.pop('has_backup_generator', instance.has_backup_generator)
+            }
+            data['ev_data'] = ev_data
+        
+        serializer = self.get_serializer(instance, data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        
+        return Response(serializer.data)
+    
+
+
+        def retrieve(self, request, *args, **kwargs):
+            """Get station with premium data transformed for Flutter"""
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+        
+        # Transform backend format to frontend format
+        # Petrol data
+        if data.get('petrol_data'):
+            petrol_data = data['petrol_data']
+            if 'petrol' in petrol_data:
+                data['petrol'] = petrol_data['petrol']
+            if 'diesel' in petrol_data:
+                data['diesel'] = petrol_data['diesel']
+            del data['petrol_data']
+        
+        # EV data
+        if data.get('ev_data'):
+            ev_data = data['ev_data']
+            data['charging_points'] = ev_data.get('charging_points', [])
+            data['has_backup_generator'] = ev_data.get('has_backup_generator', False)
+            del data['ev_data']
+        
+        return Response(data)
+
+        def retrieve(self, request, *args, **kwargs):
+            """Get station with premium data transformed for Flutter"""
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+        
+        # Transform backend format to frontend format
+        # Petrol data
+        if data.get('petrol_data'):
+            petrol_data = data['petrol_data']
+            if 'petrol' in petrol_data:
+                data['petrol'] = petrol_data['petrol']
+            if 'diesel' in petrol_data:
+                data['diesel'] = petrol_data['diesel']
+            del data['petrol_data']
+        
+        # EV data
+        if data.get('ev_data'):
+            ev_data = data['ev_data']
+            data['charging_points'] = ev_data.get('charging_points', [])
+            data['has_backup_generator'] = ev_data.get('has_backup_generator', False)
+            del data['ev_data']
+        
+        return Response(data)   
+    
+        def list(self, request, *args, **kwargs):
+            """List stations with premium data transformed for Flutter"""
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            data = serializer.data
+            # Transform each station
+            for item in data:
+                self._transform_premium_data(item)
+            return self.get_paginated_response(data)
+        
+        serializer = self.get_serializer(queryset, many=True)
+        data = serializer.data
+        for item in data:
+            self._transform_premium_data(item)
+        return Response(data)
+    
+    def _transform_premium_data(self, data):
+        """Helper method to transform premium data for Flutter"""
+        if data.get('petrol_data'):
+            petrol_data = data['petrol_data']
+            if 'petrol' in petrol_data:
+                data['petrol'] = petrol_data['petrol']
+            if 'diesel' in petrol_data:
+                data['diesel'] = petrol_data['diesel']
+            del data['petrol_data']
+        
+        if data.get('ev_data'):
+            ev_data = data['ev_data']
+            data['charging_points'] = ev_data.get('charging_points', [])
+            data['has_backup_generator'] = ev_data.get('has_backup_generator', False)
+            del data['ev_data']
+        
+        return data
+        

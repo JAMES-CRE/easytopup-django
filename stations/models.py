@@ -45,21 +45,14 @@ class Station(models.Model):
     operator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='stations')
     verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    petrol_data = models.JSONField(default=dict, blank=True, null=True)
+    diesel_data = models.JSONField(default=dict, blank=True, null=True)
+    ev_data = models.JSONField(default=dict, blank=True, null=True)
+
 
     def __str__(self):
         return self.name
 
-    @property
-    def cylinder_prices(self):
-        """Calculate cylinder prices for LPG stations"""
-        if self.type == 'LPG' and self.lpg_price_per_kg:
-            per_kg = self.lpg_price_per_kg
-            return {
-                '3kg': f'GH₵ {per_kg * 3:.2f}',
-                '6kg': f'GH₵ {per_kg * 6:.2f}',
-                '11kg': f'GH₵ {per_kg * 11:.2f}',
-                '14.5kg': f'GH₵ {per_kg * 14.5:.2f}',
-                '15kg': f'GH₵ {per_kg * 15:.2f}',
-                '50kg': f'GH₵ {per_kg * 50:.2f}',
-            }
+    
+            
         return None

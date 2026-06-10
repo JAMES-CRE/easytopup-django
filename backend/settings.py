@@ -25,13 +25,13 @@ cloudinary.config(
     cloud_name=CLOUDINARY_CLOUD_NAME,
     api_key=CLOUDINARY_API_KEY,
     api_secret=CLOUDINARY_API_SECRET,
-    api_proxy='http://proxy.server:3128'  # ADD THIS LINE - PythonAnywhere proxy
+    api_proxy='http://proxy.server:3128'  
 )
 
-# SECURITY WARNING: keep the secret key used in production secret!
+
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-pjby*$(&4z!x_0idzsmrlfdh611ekb*0n9k7fy!&9_%#s*)ht5')
 
-# SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = False
 ALLOWED_HOSTS = ['*', '.pythonanywhere.com', 'FinalProjectcom2026.pythonanywhere.com']
 
