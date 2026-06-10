@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 from django.contrib import admin
 from .models import Report, Review
 
@@ -15,4 +16,3 @@ class ReviewAdmin(admin.ModelAdmin):
     list_display = ('id', 'station', 'user', 'rating', 'comment', 'created_at')
     list_filter = ('rating',)
     search_fields = ('station__name', 'user__email', 'comment')
-    readonly_fields = ('created_at',)
