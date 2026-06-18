@@ -1,13 +1,7 @@
-# Load environment variables from .env file
-
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
 import os
 from pathlib import Path
 from dotenv import load_dotenv
 from datetime import timedelta
-
 
 # Load environment variables from .env file
 load_dotenv()
@@ -15,22 +9,12 @@ load_dotenv()
 # Build paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Cloudinary Configuration
+# Cloudinary credentials - kept only for reference (Flutter uses directly)
 CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME')
 CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY')
 CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET')
 
-# Configure Cloudinary with proxy for PythonAnywhere
-cloudinary.config(
-    cloud_name=CLOUDINARY_CLOUD_NAME,
-    api_key=CLOUDINARY_API_KEY,
-    api_secret=CLOUDINARY_API_SECRET,
-    api_proxy='http://proxy.server:3128'  
-)
-
-
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-pjby*$(&4z!x_0idzsmrlfdh611ekb*0n9k7fy!&9_%#s*)ht5')
-
 
 DEBUG = False
 ALLOWED_HOSTS = ['*', '.pythonanywhere.com', 'FinalProjectcom2026.pythonanywhere.com']
@@ -43,13 +27,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'django.contrib.postgres',
     # Third party apps
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
     'django_filters',
-    # Local apps (your apps)
+    # Local apps
     'api',
     'stations',
     'users',
@@ -58,7 +41,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # CORS must be early
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -96,41 +79,29 @@ DATABASES = {
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'Africa/Accra'  # Ghana time zone
+TIME_ZONE = 'Africa/Accra'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# Static files
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# Media files (User uploaded files like photos)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Custom User Model - tells Django to use your User model instead of the default
+# Custom User Model
 AUTH_USER_MODEL = 'users.User'
 
-# CORS settings - allow your Flutter app to connect
+# CORS settings
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
@@ -147,7 +118,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-# JWT Settings - tokens valid for 30 days
+# JWT Settings
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),

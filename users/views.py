@@ -32,8 +32,10 @@ class RegisterView(generics.CreateAPIView):
             }
         }, status=status.HTTP_201_CREATED)
 
+
 class LoginView(generics.GenericAPIView):
     permission_classes = [permissions.AllowAny]
+    serializer_class = UserSerializer  # ← ADD THIS
 
     def post(self, request):
         email = request.data.get('email')
@@ -63,6 +65,7 @@ class LoginView(generics.GenericAPIView):
             }
         })
 
+
 class ProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -70,7 +73,7 @@ class ProfileView(generics.RetrieveUpdateAPIView):
     def get_object(self):
         return self.request.user
 
-# ADD THIS CLASS
+
 class UpdateProfileView(generics.UpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -79,6 +82,5 @@ class UpdateProfileView(generics.UpdateAPIView):
         return self.request.user
 
     def update(self, request, *args, **kwargs):
-        # Allow partial updates
         kwargs['partial'] = True
         return super().update(request, *args, **kwargs)

@@ -21,7 +21,7 @@ class Report(models.Model):
         ('cylinder_not_available', 'Cylinder Size Not Available'),
         ('other', 'Other'),
     )
-    
+
     station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name='reports')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reports')
     issue_type = models.CharField(max_length=50, choices=ISSUE_TYPES)
@@ -30,11 +30,11 @@ class Report(models.Model):
     photo_url = models.URLField(blank=True, null=True)
     status = models.CharField(max_length=20, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return f"{self.user.email} - {self.station.name} - {self.issue_type}"
-    
-    
+
+
 class Review(models.Model):
     """User reviews/ratings for stations"""
     station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name='reviews')
@@ -42,11 +42,11 @@ class Review(models.Model):
     rating = models.IntegerField(help_text="Rating from 1 to 5 stars")
     comment = models.TextField(blank=True, default='')
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         ordering = ['-created_at']  # Show newest reviews first
         verbose_name = 'Review'
         verbose_name_plural = 'Reviews'
-    
+
     def __str__(self):
         return f"{self.user.email} - {self.station.name} - {self.rating}★"
