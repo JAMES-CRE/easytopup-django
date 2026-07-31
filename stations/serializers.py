@@ -8,10 +8,11 @@ class StationSerializer(serializers.ModelSerializer):
     Handles both read and write operations.
     """
 
-    # PENDING IS ALWAYS TRUE WHEN NOT VERIFIED
+    # ─── PENDING: true when not verified ───
     pending = serializers.SerializerMethodField()
 
-    # ── THESE PARTS MAPS FLUTTER AND DJANGO
+    # ─── FLUTTER FIELD MAPPING ───
+    # These accept data from Flutter and map to backend fields
     petrol = serializers.JSONField(required=False, allow_null=True, write_only=True)
     diesel = serializers.JSONField(required=False, allow_null=True, write_only=True)
     charging_points = serializers.JSONField(required=False, allow_null=True, write_only=True)
@@ -30,13 +31,13 @@ class StationSerializer(serializers.ModelSerializer):
             'whatsapp',
             'has_backup_generator',
             'lpg_type',
-            #'lpg_price_per_kg',
             'delivery_available',
             'photos',
             'verified',
             'pending',
             'created_at',
             'operator',
+            # ─── Flutter-friendly fields ───
             'petrol',
             'diesel',
             'charging_points',
@@ -46,32 +47,34 @@ class StationSerializer(serializers.ModelSerializer):
     def get_pending(self, obj):
         return not obj.verified
 
+    # ─── READ: Django → Flutter ───
     def to_representation(self, instance):
         """When sending data to Flutter (READ)"""
         representation = super().to_representation(instance)
 
-        # MAPS petrol_data PETROL
+        # Map petrol_data → petrol
         representation['petrol'] = instance.petrol_data or None
 
-        # MAPS diesel_data TO DIESEL
+        # Map diesel_data → diesel
         representation['diesel'] = instance.diesel_data or None
 
-        # MAPS ev_data TO charging_points
+        # Map ev_data → charging_points
         representation['charging_points'] = instance.ev_data or []
 
         return representation
 
+    # ─── CREATE: Flutter → Django ───
     def create(self, validated_data):
-        """Handle creation with data"""
+        """Handle creation with premium data"""
         # Extract Flutter fields
         petrol_data = validated_data.pop('petrol', None)
         diesel_data = validated_data.pop('diesel', None)
         ev_data = validated_data.pop('charging_points', None)
 
-        # CREATE STATION
+        # Create station
         station = Station.objects.create(**validated_data)
 
-
+        # Set premium data
         if petrol_data is not None:
             station.petrol_data = petrol_data
         if diesel_data is not None:
@@ -82,18 +85,19 @@ class StationSerializer(serializers.ModelSerializer):
         station.save()
         return station
 
+    # ─── UPDATE: Flutter → Django ───
     def update(self, instance, validated_data):
-        """Handle updates with data"""
+        """Handle updates with premium data"""
         # Extract Flutter fields
         petrol_data = validated_data.pop('petrol', None)
         diesel_data = validated_data.pop('diesel', None)
         ev_data = validated_data.pop('charging_points', None)
 
-        # UPDATE REGULAR FIELDS
+        # Update regular fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
-        # UPDATE DATA
+        # Update premium data (even if empty, to clear)
         if petrol_data is not None:
             instance.petrol_data = petrol_data
         if diesel_data is not None:

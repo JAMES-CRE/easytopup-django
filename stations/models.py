@@ -15,7 +15,7 @@ class Station(models.Model):
         ('Closed', 'Closed'),
     )
 
-    # ID 
+    # ID
     id = models.CharField(
         max_length=36,
         primary_key=True,
@@ -23,7 +23,7 @@ class Station(models.Model):
         editable=False,
     )
 
-    # BASIC FIELDS 
+    # BASIC FIELDS
     name = models.CharField(max_length=100)
     type = models.CharField(max_length=20, choices=FUEL_TYPES)
     lat = models.FloatField()
@@ -42,7 +42,7 @@ class Station(models.Model):
     has_backup_generator = models.BooleanField(default=False)
     ev_data = models.JSONField(default=list, blank=True, null=True)
 
-    # LPG 
+    # LPG
     lpg_type = models.JSONField(default=list, blank=True, null=True)
     delivery_available = models.BooleanField(default=False)
 
@@ -50,7 +50,7 @@ class Station(models.Model):
     petrol_data = models.JSONField(default=dict, blank=True, null=True)
     diesel_data = models.JSONField(default=dict, blank=True, null=True)
 
-    # RELATIONS 
+    # RELATIONS
     operator = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,

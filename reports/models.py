@@ -22,17 +22,40 @@ class Report(models.Model):
         ('other', 'Other'),
     )
 
+    # ─── ADDED STATUS CHOICES ───
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('verified', 'Verified'),
+        ('resolved', 'Resolved'),
+        ('rejected', 'Rejected'),
+    )
+
     station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name='reports')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reports')
     issue_type = models.CharField(max_length=50, choices=ISSUE_TYPES)
     extra_data = models.JSONField(default=dict, blank=True)
     notes = models.TextField(blank=True, default='')
     photo_url = models.URLField(blank=True, null=True)
-    status = models.CharField(max_length=20, default='pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # ─── NEW REPLY FIELDS ───
+    operator_reply = models.TextField(blank=True, null=True)
+    reply_created_at = models.DateTimeField(blank=True, null=True)
+    replied_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='replied_reports'
+    )
 
     def __str__(self):
         return f"{self.user.email} - {self.station.name} - {self.issue_type}"
+
+    @property
+    def has_reply(self):
+        return self.operator_reply is not None and self.operator_reply != ''
 
 
 class Review(models.Model):
