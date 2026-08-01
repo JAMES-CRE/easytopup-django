@@ -8,10 +8,10 @@ class StationSerializer(serializers.ModelSerializer):
     Handles both read and write operations.
     """
 
-    # ─── PENDING: true when not verified ───
+    # PENDING: true when not verified
     pending = serializers.SerializerMethodField()
 
-    # ─── FLUTTER FIELD MAPPING ───
+    # FLUTTER FIELD MAPPING
     # These accept data from Flutter and map to backend fields
     petrol = serializers.JSONField(required=False, allow_null=True, write_only=True)
     diesel = serializers.JSONField(required=False, allow_null=True, write_only=True)
@@ -47,23 +47,23 @@ class StationSerializer(serializers.ModelSerializer):
     def get_pending(self, obj):
         return not obj.verified
 
-    # ─── READ: Django → Flutter ───
+    # READ: Django to Flutter
     def to_representation(self, instance):
         """When sending data to Flutter (READ)"""
         representation = super().to_representation(instance)
 
-        # Map petrol_data → petrol
+
         representation['petrol'] = instance.petrol_data or None
 
-        # Map diesel_data → diesel
+
         representation['diesel'] = instance.diesel_data or None
 
-        # Map ev_data → charging_points
+
         representation['charging_points'] = instance.ev_data or []
 
         return representation
 
-    # ─── CREATE: Flutter → Django ───
+    #  CREATE: Flutter to Django
     def create(self, validated_data):
         """Handle creation with premium data"""
         # Extract Flutter fields
@@ -85,7 +85,7 @@ class StationSerializer(serializers.ModelSerializer):
         station.save()
         return station
 
-    # ─── UPDATE: Flutter → Django ───
+    # UPDATE: Flutter to Django
     def update(self, instance, validated_data):
         """Handle updates with premium data"""
         # Extract Flutter fields

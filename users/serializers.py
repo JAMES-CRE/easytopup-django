@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'email', 'first_name', 'last_name', 'phone', 'role', 'business_name', 'photo_url', 'created_at']
         read_only_fields = ['id', 'created_at']
         extra_kwargs = {
-            'email': {'required': False}  # Make email optional for updates
+            'email': {'required': False}
         }
 
 class RegisterSerializer(serializers.ModelSerializer):

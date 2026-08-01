@@ -22,7 +22,7 @@ class Report(models.Model):
         ('other', 'Other'),
     )
 
-    # ─── ADDED STATUS CHOICES ───
+    # ADDED STATUS CHOICES
     STATUS_CHOICES = (
         ('pending', 'Pending'),
         ('verified', 'Verified'),
@@ -39,7 +39,7 @@ class Report(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # ─── NEW REPLY FIELDS ───
+    #  NEW REPLY FIELDS
     operator_reply = models.TextField(blank=True, null=True)
     reply_created_at = models.DateTimeField(blank=True, null=True)
     replied_by = models.ForeignKey(
@@ -67,7 +67,7 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-created_at']  # Show newest reviews first
+        ordering = ['-created_at']
         verbose_name = 'Review'
         verbose_name_plural = 'Reviews'
 

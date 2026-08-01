@@ -4,8 +4,8 @@ from .models import Report, Review
 class ReportSerializer(serializers.ModelSerializer):
     user_name = serializers.SerializerMethodField()
     station_name = serializers.SerializerMethodField()
-    
-    # ─── NEW REPLY FIELDS ───
+
+    #  REPLY FIELDS
     replied_by_name = serializers.SerializerMethodField()
     has_reply = serializers.SerializerMethodField()
 
@@ -20,7 +20,7 @@ class ReportSerializer(serializers.ModelSerializer):
     def get_station_name(self, obj):
         return obj.station.name if obj.station else None
 
-    # ─── NEW REPLY METHODS ───
+    # NEW REPLY METHODS
     def get_replied_by_name(self, obj):
         """Get the name of the person who replied"""
         if obj.replied_by:

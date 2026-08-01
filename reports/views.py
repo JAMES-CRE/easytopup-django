@@ -39,12 +39,12 @@ class ReportViewSet(viewsets.ModelViewSet):
             'data': serializer.data
         }, status=status.HTTP_201_CREATED)
 
-    # ─── REPLY TO REPORT ───
+    # REPLY TO REPORT
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
     def reply(self, request, pk=None):
         """Operator replies to a report"""
         try:
-            # ─── Get the report directly by ID ───
+            # Get the report directly by ID
             report = Report.objects.get(id=pk)
         except Report.DoesNotExist:
             return Response(
@@ -68,7 +68,7 @@ class ReportViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # ─── Update report with reply and mark as resolved ───
+        # Update report with reply and mark as resolved
         report.operator_reply = reply_text.strip()
         report.reply_created_at = timezone.now()
         report.replied_by = user
@@ -82,7 +82,7 @@ class ReportViewSet(viewsets.ModelViewSet):
             'data': ReportSerializer(report).data
         })
 
-    # ─── OPERATOR REPORTS ───
+    #  OPERATOR REPORTS
     @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated])
     def operator_reports(self, request):
         """Get all reports for stations owned by the operator"""

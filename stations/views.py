@@ -30,7 +30,7 @@ class StationViewSet(viewsets.ModelViewSet):
             return Station.objects.filter(verified=True)
         return Station.objects.all()
 
-    # ─── CREATE ───
+    #  CREATE
     def create(self, request, *args, **kwargs):
         """Operator creates a new station (pending approval)"""
         # Only operators and admins can add stations
@@ -66,7 +66,7 @@ class StationViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    # ─── READ ───
+    # READ
     @action(detail=False, methods=['get'],
             url_path='my-stations', permission_classes=[IsAuthenticated])
     def my_stations(self, request):
@@ -75,7 +75,7 @@ class StationViewSet(viewsets.ModelViewSet):
         serializer = StationSerializer(stations, many=True)
         return Response(serializer.data)
 
-    # ─── UPDATE ───
+    #  UPDATE
     def update(self, request, *args, **kwargs):
         """Full station update (operators edit their stations)"""
         partial = kwargs.pop('partial', False)
@@ -93,7 +93,7 @@ class StationViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # ─── DIRECT FIELD UPDATE ───
+        # DIRECT FIELD UPDATE
         # Handle EV charging points
         if 'charging_points' in data:
             instance.ev_data = data.pop('charging_points')
@@ -106,8 +106,8 @@ class StationViewSet(viewsets.ModelViewSet):
             instance.diesel_data = data.pop('diesel')
 
         # Handle basic fields
-        for key in ['name', 'phone', 'whatsapp', 'lat', 'lng', 'photos', 
-                    'has_backup_generator', 'price', 'status', 'lpg_type', 
+        for key in ['name', 'phone', 'whatsapp', 'lat', 'lng', 'photos',
+                    'has_backup_generator', 'price', 'status', 'lpg_type',
                     'delivery_available']:
             if key in data:
                 setattr(instance, key, data[key])
@@ -122,7 +122,7 @@ class StationViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
-    # ─── UPDATE STATUS ───
+    # UPDATE STATUS
     @action(detail=True, methods=['post'],
             url_path='update-status', permission_classes=[IsAuthenticated])
     def update_status(self, request, pk=None):
@@ -146,7 +146,7 @@ class StationViewSet(viewsets.ModelViewSet):
         station.save()
         return Response({'message': f'Station marked as {new_status}'})
 
-    # ─── ADMIN ACTIONS ───
+    # ADMIN ACTIONS
     @action(detail=True, methods=['post'],
             url_path='approve', permission_classes=[IsAuthenticated])
     def approve(self, request, pk=None):
@@ -162,7 +162,7 @@ class StationViewSet(viewsets.ModelViewSet):
         station.save()
         return Response({'message': 'Station approved successfully'})
 
-    # ─── HELPER ───
+    #  HELPER
     def perform_create(self, serializer):
         """Set default values when creating a station"""
         serializer.save(
